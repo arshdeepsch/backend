@@ -5,11 +5,11 @@ const app = express()
 const cors = require('cors')
 app.use(cors())
 app.use(express.static('build'))
-const personModel = require('./models/persons')
 const person = require('./models/person')
-const { response } = require('express')
+const {
+    response
+} = require('express')
 const password = process.argv[2];
-mongoose.connect(url);
 
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
@@ -22,7 +22,7 @@ morgan.token('body', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-    phoneModel.find({}).then(result => {
+    person.find({}).then(result => {
         res.json(result);
     })
 })
@@ -34,13 +34,17 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const person = persons.filter(person => person.id === Number(req.params.id))
-    if (person.length > 0) {
-        res.json(person)
-    }
-    else {
-        res.status(404).end()
-    }
+    person.find({
+        id: Number(req.params.id)
+    }).then(number => {
+        res.json(number)
+    })
+    // const person = persons.filter(person => person.id === Number(req.params.id))
+    // if (person.length > 0) {
+    //     res.json(person)
+    // } else {
+    //     res.status(404).end()
+    // }
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -51,7 +55,9 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
     const body = req.body;
     if (!body.name || !body.number) {
-        return response.status(400).json({ error: 'content missing' })
+        return response.status(400).json({
+            error: 'content missing'
+        })
     }
     const person = new personModel({
         name: body.name,
@@ -68,6 +74,13 @@ app.post('/api/persons', (req, res) => {
 app.put('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id);
     const body = req.body;
+    person.updateOne({
+        id: id
+    },
+    {
+        
+    })
+    person.find({}).then(number => number.name);
     persons = persons.map((person) => {
         if (person.id === id) {
             person.number = body.number;
@@ -80,7 +93,9 @@ app.put('/api/persons/:id', (req, res) => {
 })
 
 const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' })
+    response.status(404).send({
+        error: 'unknown endpoint'
+    })
 }
 app.use(unknownEndpoint)
 
