@@ -116,7 +116,9 @@ const errorHandler = (error, request, response, next) => {
             error: 'malformatted id'
         })
     }
+
     next(error)
+    
 }
 
 app.use(unknownEndpoint)
