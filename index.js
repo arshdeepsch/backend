@@ -39,12 +39,6 @@ app.get('/api/persons/:id', (req, res) => {
     }).then(number => {
         res.json(number)
     })
-    // const person = persons.filter(person => person.id === Number(req.params.id))
-    // if (person.length > 0) {
-    //     res.json(person)
-    // } else {
-    //     res.status(404).end()
-    // }
 })
 
 app.delete('/api/persons/:id', (req, res) => {
