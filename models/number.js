@@ -12,9 +12,18 @@ mongoose.connect(uri).then(result => {
     })
 
 const numberSchema = new mongoose.Schema({
-    name: String,
-    date: Date,
-    number: String,
+    name: {
+        type: String,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
+    number: {
+        type: String,
+        required: true
+    }
 })
 
 numberSchema.set('toJSON', {
@@ -25,4 +34,4 @@ numberSchema.set('toJSON', {
     }
 })
 
-module.exports = mongoose.model('Number',numberSchema)
+module.exports = mongoose.model('Number', numberSchema)
