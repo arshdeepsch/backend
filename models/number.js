@@ -22,6 +22,7 @@ const numberSchema = new mongoose.Schema({
     },
     number: {
         type: String,
+        minLength: 10,
         required: true
     }
 })
