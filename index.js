@@ -73,10 +73,6 @@ app.post('/api/persons', (req, res) => {
         return res.status(400).json({
             error: 'missing number'
         })
-    } else if (persons.filter((person) => person.name === body.name).length > 0) {
-        return res.status(400).json({
-            error: 'name must be unique'
-        })
     }
 
     const number = new Number({
