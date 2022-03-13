@@ -5,7 +5,7 @@ const app = express()
 const cors = require('cors')
 app.use(cors())
 app.use(express.static('build'))
-const person = require('./models/person')
+const Number = require('./models/person')
 const {
     response
 } = require('express')
@@ -22,7 +22,7 @@ morgan.token('body', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-    person.find({}).then(result => {
+    Number.find({}).then(result => {
         res.json(result);
     })
 })
@@ -34,9 +34,9 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    person.find({
-        id: Number(req.params.id)
-    }).then(number => {
+    Number.findById(
+        req.params.id
+    ).then(number => {
         res.json(number)
     })
 })
@@ -53,14 +53,16 @@ app.post('/api/persons', (req, res) => {
             error: 'content missing'
         })
     }
-    const person = new personModel({
+
+    const person = new Number({
         name: body.name,
         date: new Date(),
         number: body.number,
     });
+
     person.save().then(
         result => {
-            response.json(result);
+            res.json(result);
         }
     )
 })
@@ -70,10 +72,7 @@ app.put('/api/persons/:id', (req, res) => {
     const body = req.body;
     person.updateOne({
         id: id
-    },
-    {
-        
-    })
+    }, {})
     person.find({}).then(number => number.name);
     persons = persons.map((person) => {
         if (person.id === id) {
