@@ -91,6 +91,7 @@ app.put('/api/persons/:id', (req, res, next) => {
     const id = req.params.id
     const updatedNum = {
         name: req.body.name,
+        date: new Date(),
         number: req.body.number
     }
 
@@ -118,7 +119,7 @@ const errorHandler = (error, request, response, next) => {
     }
 
     next(error)
-    
+
 }
 
 app.use(unknownEndpoint)
