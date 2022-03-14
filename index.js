@@ -80,11 +80,19 @@ app.post('/api/persons', (req, res, next) => {
         date: new Date(),
         number: body.number
     })
-    number.save().then(
-        result => {
-            res.json(result)
-        }
-    ).catch(error => next(error))
+    if (Number.findOne({
+            name: body.name
+        })) {
+        res.status(500).send({
+            error: `${body.name} is already in the phone book`
+        })
+    } else {
+        number.save().then(
+            result => {
+                res.json(result)
+            }
+        ).catch(error => next(error))
+    }
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -123,9 +131,7 @@ const errorHandler = (error, request, response, next) => {
             error: error.message
         })
     }
-
     next(error)
-
 }
 
 app.use(unknownEndpoint)
