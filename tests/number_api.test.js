@@ -4,7 +4,7 @@ const app = require('../app')
 const api = supertest(app)
 const Number = require('../models/number')
 
-const initalNumbers = [{
+const initialNumbers = [{
   name: 'arshdeep',
   date: new Date(),
   number: '000-000-0000'
@@ -12,14 +12,23 @@ const initalNumbers = [{
   name: 'ronak',
   date: new Date(),
   number: '200-000-0000'
-}]
+},
+{
+  name: 'Test',
+  date: new Date(),
+  number: '200-000-0000'
+}
+]
 
 beforeAll(async () => {
   await Number.deleteMany({})
-  let number = new Number(initalNumbers[0])
-  await number.save()
-  number = new Number(initalNumbers[1])
-  await number.save()
+  const numbersPromises = initialNumbers.map(num => new Number(num).save())
+  const PromiseArr = await Promise.all(numbersPromises)
+})
+
+test('info is returned properly', async () => {
+  const result = await api.get('/api/persons/info')
+  expect(result.text).toContain(`${initialNumbers.length}`)
 })
 
 
@@ -30,7 +39,7 @@ test('numbers are returned as json', async () => {
 
 test('all numbers returned', async () => {
   const response = await api.get('/api/persons')
-  expect(response.body).toHaveLength(initalNumbers.length)
+  expect(response.body).toHaveLength(initialNumbers.length)
 }, 10000)
 
 test('db contains arshdeep', async () => {
@@ -46,7 +55,7 @@ test('number without name is not added', async () => {
   }
   api.post('/api/persons').send(testNumber).expect(400)
   const resp = await api.get('/api/persons')
-  expect(resp.body).toHaveLength(initalNumbers.length)
+  expect(resp.body).toHaveLength(initialNumbers.length)
 })
 
 test('a valid number can be added', async () => {
@@ -66,7 +75,7 @@ test('a valid number can be added', async () => {
 
   const names = response.body.map(r => r.name)
 
-  expect(response.body).toHaveLength(3)
+  expect(response.body).toHaveLength(initialNumbers.length+1)
   expect(names).toContain(
     'Ron'
   )

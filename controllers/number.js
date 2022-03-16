@@ -2,41 +2,28 @@ const numberRouter = require('express').Router()
 const Number = require('../models/number')
 
 numberRouter.get('/', async (req, res) => {
-  const notes  = await Number.find({})
+  const notes = await Number.find({})
   res.json(notes)
 })
 
-numberRouter.get('/info', (req, res, next) => {
-  Number.find({}).then(
-    result => {
-      res.send(`<div>Phonebook has info for ${result.length} people</div>
-                      <div>${new Date()}</div>`)
-    }
-  ).catch(error => next(error))
+numberRouter.get('/info', async (req, res, next) => {
+  const result = await Number.find({})
+  res.send(`<div>Phonebook has info for ${result.length} people</div>
+  <div>${new Date()}</div>`)
 })
 
-numberRouter.get('/:id', (req, res, next) => {
-  Number.findById(req.params.id).then(
-    number => {
-      if (number) {
-        res.json(number)
-      } else {
-        res.status(404).end()
-      }
-    }
-  ).catch(
-    error => {
-      next(error)
-    }
-  )
+numberRouter.get('/:id', async (req, res, next) => {
+  const result = await Number.findById(req.params.id)
+  if (result) {
+    res.json(result)
+  } else {
+    res.status(404).end()
+  }
 })
 
-numberRouter.delete('/:id', (req, res, next) => {
-  Number.findByIdAndRemove(req.params.id).then(
-    result => {
-      res.status(204).end()
-    }
-  ).catch(error => next(error))
+numberRouter.delete('/:id', async (req, res, next) => {
+  await Number.findByIdAndRemove(req.params.id)
+  res.status(204).end()
 })
 
 numberRouter.post('/', async (req, res, next) => {
@@ -50,14 +37,14 @@ numberRouter.post('/', async (req, res, next) => {
       error: 'missing number'
     })
   }
-
   const number = new Number({
     name: body.name,
     date: new Date(),
     number: body.number
   })
-
-  if ( await Number.findOne({ name: body.name }) ) {
+  if (await Number.findOne({
+    name: body.name
+  })) {
     res.status(500).send({
       error: `${body.name} is already in the phone book`
     })
@@ -71,49 +58,20 @@ numberRouter.post('/', async (req, res, next) => {
 
 })
 
-numberRouter.put('/:id', (req, res, next) => {
+numberRouter.put('/:id', async (req, res, next) => {
   const id = req.params.id
   const updatedNum = {
     name: req.body.name,
     date: new Date(),
     number: req.body.number
   }
-
-  Number.findByIdAndUpdate(id, updatedNum, {
+  const updated = await Number.findByIdAndUpdate(id, updatedNum, {
     runValidators: true,
     new: true,
     context: 'query'
-  }).then(
-    updated => res.json(updated)
-  ).catch(
-    error => next(error)
-  )
+  })
+  res.json(updated)
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 module.exports = numberRouter
