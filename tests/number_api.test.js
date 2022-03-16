@@ -6,11 +6,11 @@ const Number = require('../models/number')
 
 const initalNumbers = [{
   name: 'arshdeep',
-  date: '2022-03-13T23:16:37.295Z',
+  date: new Date(),
   number: '000-000-0000'
 }, {
   name: 'ronak',
-  date: '2022-03-13T23:16:37.295Z',
+  date: new Date(),
   number: '200-000-0000'
 }]
 
@@ -22,18 +22,6 @@ beforeAll(async () => {
   await number.save()
 })
 
-test('a valid number can be added', async () => {
-  const testNumber = {
-    name: 'ron',
-    date: '2022-03-13T23:16:37.295Z',
-    number: '200-000-0000'
-  }
-  await api
-    .post('/api/persons').send(testNumber).expect(201)
-  const response = await api.get('/api/persons')
-  const names = response.body.map(num => num.name)
-  expect(names).toContain('ron')
-},1000000)
 
 test('numbers are returned as json', async () => {
   await api
@@ -59,6 +47,29 @@ test('number without name is not added', async () => {
   api.post('/api/persons').send(testNumber).expect(400)
   const resp = await api.get('/api/persons')
   expect(resp.body).toHaveLength(initalNumbers.length)
+})
+
+test('a valid number can be added', async () => {
+  const testNumber = {
+    name: 'Ron',
+    date: new Date(),
+    number: '200-000-0000'
+  }
+
+  await api
+    .post('/api/persons')
+    .send(testNumber)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/persons')
+
+  const names = response.body.map(r => r.name)
+
+  expect(response.body).toHaveLength(3)
+  expect(names).toContain(
+    'Ron'
+  )
 })
 
 afterAll(() => {

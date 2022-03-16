@@ -39,7 +39,7 @@ numberRouter.delete('/:id', (req, res, next) => {
   ).catch(error => next(error))
 })
 
-numberRouter.post('/', (req, res, next) => {
+numberRouter.post('/', async (req, res, next) => {
   const body = req.body
   if (!body.name) {
     return res.status(400).json({
@@ -56,9 +56,8 @@ numberRouter.post('/', (req, res, next) => {
     date: new Date(),
     number: body.number
   })
-  if (Number.findOne({
-    name: body.name
-  })) {
+
+  if ( await Number.findOne({ name: body.name }) ) {
     res.status(500).send({
       error: `${body.name} is already in the phone book`
     })
@@ -69,6 +68,7 @@ numberRouter.post('/', (req, res, next) => {
       }
     ).catch(error => next(error))
   }
+
 })
 
 numberRouter.put('/:id', (req, res, next) => {
