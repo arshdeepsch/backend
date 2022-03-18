@@ -5,7 +5,6 @@ test('reverse of a', () => {
   expect(result).toBe('a')
 })
 
-
 test('reverse of react', () => {
   const result = reverse('react')
   expect(result).toBe('tcaer')
